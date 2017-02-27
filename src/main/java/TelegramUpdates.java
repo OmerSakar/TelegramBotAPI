@@ -26,7 +26,7 @@ public class TelegramUpdates {
             updateList.sort((u1, u2) -> Integer.compare(u1.getUpdate_id(), u2.getUpdate_id()));
             if(!updateList.isEmpty()) this.offset = updateList.get(0).getUpdate_id();
             System.out.println(updateList.size());
-            updates.getResult().forEach(update -> handler.handleMessage(update)) ;
+            updates.getResult().forEach(update -> this.handler.handleMessage(update)) ;
         } catch (IOException e) {
             e.printStackTrace();
         }

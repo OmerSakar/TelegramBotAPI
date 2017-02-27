@@ -1,6 +1,3 @@
-/**
- * Created by omer on 20-11-16.
- */
 public class SimpleMessageHandler extends TelegramMessageHandler {
 
     @Override

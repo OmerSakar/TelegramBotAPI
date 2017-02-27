@@ -26,38 +26,40 @@ import java.io.StringReader;
 public abstract class TelegramMessageHandler {
     abstract void handleMessage(Updates.Update update);
 
-    public void sendMessage(int chat_id, String text, int reply_to_message_id) {
+    //TODO reply_markup needs to be another type, this will be done after the specific types are
+    public void sendMessage(int chat_id, String text, String parse_mode, Boolean disable_web_page_preview,
+                            Boolean disable_notification, Integer reply_to_message_id, String reply_markup) {
         HttpRequestFactory requestFactory = Variables.getHttpRequestFactory();
 
         ObjectNode node = JsonNodeFactory.instance.objectNode();
         node.put("chat_id", chat_id);
         node.put("text", text);
-        node.put("reply_to_message_id", reply_to_message_id);
+        if (disable_web_page_preview != null) node.put("disable_web_page_preview", disable_web_page_preview);
+        if (reply_to_message_id != null) node.put("reply_to_message_id", reply_to_message_id);
+        if (disable_notification != null) node.put("disable_notification", disable_notification);
+        if (reply_markup != null) node.put("reply_markup", reply_markup);
 
         try {
-            String requestBody = node.toString();
             HttpRequest request = requestFactory.buildPostRequest(new TelegramUrl(Variables.getBaseUrl() + "/sendMessage"),
-                    ByteArrayContent.fromString("application/json", requestBody));
+                    ByteArrayContent.fromString("application/json", node.toString()));
             request.getHeaders().setContentType("application/json");
             request.setRequestMethod("POST");
 
-            StandardMessage videoFeed = request.execute().parseAs(StandardMessage.class);
-            if (videoFeed.ok) {
-                if (videoFeed.result instanceof ArrayMap){
-                    ArrayMap result = (ArrayMap<String, String>) videoFeed.result;
-                    assert ((ArrayMap<String, String>) (result.get("chat"))).get("id").equals(new String("" + chat_id));
-
-                } else {
-                    System.err.println("Oke something bad happened");
-                }
-            } else {
-                System.err.println("bad request\t" + videoFeed.result);
-            }
-
-
+            StandardMessage standardMessage = request.execute().parseAs(StandardMessage.class);
+            if(!standardMessage.ok) System.err.println("bad request\t" + standardMessage.result);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void sendMessage(int chat_id, String text, int reply_to_message_id) {
+        this.sendMessage(chat_id, text, null, null, null,
+                reply_to_message_id, null);
+    }
+
+    public void sendMessage(int chat_id, String text) {
+        this.sendMessage(chat_id, text, null, null, null,
+                null, null);
     }
 
     public User getMe() throws IOException {
@@ -68,5 +70,6 @@ public abstract class TelegramMessageHandler {
 
         return null;
     }
+
 
 }
