@@ -16,10 +16,14 @@ object Variables {
 	val HTTP_TRANSPORT = NetHttpTransport()
 	val jsonFactory: JsonFactory = JacksonFactory()
 	var token = ""
-	val baseUrl = "https://api.telegram.org/bot" + token
+	var baseUrl = "https://api.telegram.org/bot"
 
 	val httpRequestFactory: HttpRequestFactory
 		get() = HTTP_TRANSPORT.createRequestFactory { request -> request.parser = JsonObjectParser(jsonFactory) }
+}
 
+fun setToken(token: String) {
+	Variables.token = token
+	Variables.baseUrl += token
 }
 

@@ -20,6 +20,7 @@ class TelegramUpdater(
             val requestFactory = Variables.httpRequestFactory
             try {
                 val requestBody = StringBuilder().append("{\"offset\":" + offset + "}").toString()
+                print(Variables.baseUrl)
                 val request: HttpRequest = requestFactory.buildPostRequest(
                         TelegramUrl(Variables.baseUrl + updateUrl),
                         ByteArrayContent.fromString("application/json", requestBody))
@@ -40,7 +41,7 @@ class TelegramUpdater(
 }
 
 fun runTelegramBot(token: String, handler: TelegramMessageHandler, timeBetweenPolls: Long = 100) {
-    Variables.token = token;
+    setToken(token)
     val tUpdater = TelegramUpdater(handler = handler)
     while (true) {
         tUpdater.getUpdates()
