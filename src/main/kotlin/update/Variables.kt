@@ -15,7 +15,7 @@ import com.google.api.client.json.jackson2.JacksonFactory
 object Variables {
 	val HTTP_TRANSPORT = NetHttpTransport()
 	val jsonFactory: JsonFactory = JacksonFactory()
-	val token = "150287693:AAGJ-J-7-OiNiu8PW9QuKVf1VBvt-MNWt_w"
+	var token = ""
 	val baseUrl = "https://api.telegram.org/bot" + token
 
 	val httpRequestFactory: HttpRequestFactory

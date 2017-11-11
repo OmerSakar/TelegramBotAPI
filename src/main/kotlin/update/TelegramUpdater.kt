@@ -7,15 +7,16 @@ import handler.SimpleMessageHandler
 import java.io.IOException
 
 class TelegramUpdater(
-		var offset: Int = 0,
-		val updateUrl: String = "/getUpdates",
-		val handler: TelegramMessageHandler = SimpleMessageHandler(),
-		val timeout: Int = 100,
-		val limit: Int = 100
+        private var offset: Int = 0,
+        private val updateUrl: String = "/getUpdates",
+        val handler: TelegramMessageHandler = SimpleMessageHandler(),
+        val timeout: Int = 100,
+        val limit: Int = 100
 ) {
 
-	fun getUpdates(offset: Int = this.offset, limit: Int = this.limit, timeout: Int = this.timeout) {
-		synchronized(this) {
+    fun getUpdates(offset: Int = this.offset, limit: Int = this.limit, timeout: Int = this.timeout) {
+
+        synchronized(offset) {
             val requestFactory = Variables.httpRequestFactory
             try {
                 val requestBody = StringBuilder().append("{\"offset\":" + offset + "}").toString()
@@ -28,25 +29,27 @@ class TelegramUpdater(
                 val updateList: List<Update> = updates.result
                 updateList.sortedBy { it.updateId }
                 if (!updateList.isEmpty()) {
-					this.offset = updateList.last().updateId + 1
+                    this.offset = updateList.last().updateId + 1
                 }
                 updates.result.forEach({ update -> this.handler.handleMessage(update) })
             } catch (e: IOException) {
                 e.printStackTrace()
             }
         }
-	}
-
+    }
 }
 
+fun runTelegramBot(token: String, handler: TelegramMessageHandler, timeBetweenPolls: Long = 100) {
+    Variables.token = token;
+    val tUpdater = TelegramUpdater(handler = handler)
+    while (true) {
+        tUpdater.getUpdates()
+        Thread.sleep(timeBetweenPolls)
+    }
+}
 
 fun main(args: Array<String>) {
-	val tUpdater = TelegramUpdater()
-	//tUpdater.handler.getMe()
-	while (true) {
-		tUpdater.getUpdates()
-		Thread.sleep(1000)
-		println("Updated")
-
-	}
+    runTelegramBot("150287693:AAGJ-J-7-OiNiu8PW9QuKVf1VBvt-MNWt_w",
+            SimpleMessageHandler())
 }
+
