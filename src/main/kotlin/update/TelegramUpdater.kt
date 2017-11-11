@@ -20,7 +20,6 @@ class TelegramUpdater(
             val requestFactory = Variables.httpRequestFactory
             try {
                 val requestBody = StringBuilder().append("{\"offset\":" + offset + "}").toString()
-                print(Variables.baseUrl)
                 val request: HttpRequest = requestFactory.buildPostRequest(
                         TelegramUrl(Variables.baseUrl + updateUrl),
                         ByteArrayContent.fromString("application/json", requestBody))
