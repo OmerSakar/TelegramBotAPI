@@ -2,12 +2,11 @@ package update
 
 import com.google.api.client.http.ByteArrayContent
 import com.google.api.client.http.HttpRequest
-import com.google.api.client.http.HttpRequestFactory
 import handler.TelegramMessageHandler
 import handler.SimpleMessageHandler
 import java.io.IOException
 
-class TelegramUpdates(
+class TelegramUpdater(
 		var offset: Int = 0,
 		val updateUrl: String = "/getUpdates",
 		val handler: TelegramMessageHandler = SimpleMessageHandler(),
@@ -42,10 +41,10 @@ class TelegramUpdates(
 
 
 fun main(args: Array<String>) {
-	val tUpdates: TelegramUpdates = TelegramUpdates()
-	//tUpdates.handler.getMe()
+	val tUpdater = TelegramUpdater()
+	//tUpdater.handler.getMe()
 	while (true) {
-		tUpdates.getUpdates()
+		tUpdater.getUpdates()
 		Thread.sleep(1000)
 		println("Updated")
 
