@@ -3,7 +3,7 @@ package datatypes
 import com.google.api.client.util.Key
 import datatypes.not_implemented.*
 
-data class Message(
+class Message(
 
 		@Key("message_id") var messageId: Int = -1,
 		@Key var from: User? = null,
